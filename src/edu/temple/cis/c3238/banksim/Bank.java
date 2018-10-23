@@ -4,6 +4,7 @@ package edu.temple.cis.c3238.banksim;
  * @author Cay Horstmann
  * @author Modified by Paul Wolfgang
  * @author Modified by Charles Wang
+ * d
  */
 
 public class Bank {
@@ -24,7 +25,7 @@ public class Bank {
         ntransacts = 0;
     }
 
-    public void transfer(int from, int to, int amount) {
+    public synchronized void transfer(int from, int to, int amount) {
 //        accounts[from].waitForAvailableFunds(amount);
         if (accounts[from].withdraw(amount)) {
             accounts[to].deposit(amount);
@@ -32,6 +33,8 @@ public class Bank {
         if (shouldTest()) test();
     }
 
+    //this runs exclusively in each thread
+    //need to make this into another thread, so all other threads wait until sum thread runs
     public void test() {
         int sum = 0;
         for (Account account : accounts) {

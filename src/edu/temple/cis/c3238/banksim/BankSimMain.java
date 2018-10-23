@@ -1,9 +1,13 @@
 package edu.temple.cis.c3238.banksim;
 
-/**
+/**Original Authors -
  * @author Cay Horstmann
  * @author Modified by Paul Wolfgang
- * @author Modified by Charles Wang
+ * @author Modified by Charles Wangw
+ *
+ * @author Modified by Pat Looft for CIS 3296 lab 5
+ * @author Modified by Binh Nguyen for CIS 3296 lab 5
+ *
  */
 public class BankSimMain {
 
