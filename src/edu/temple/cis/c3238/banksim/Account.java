@@ -40,7 +40,7 @@ public class Account {
     }
 
     synchronized void waitForAvailableFunds(int amount) {
-        while (amount >= balance && !myBank.isTesting()) {
+        while (myBank.isOpen() && amount >= balance && !myBank.isTesting()) {
             try {
                 wait(300);
             } catch (InterruptedException ex) {
@@ -52,16 +52,5 @@ public class Account {
     @Override
     public String toString() {
         return String.format("Account[%d] balance %d", id, balance);
-    }
-
-    public synchronized void waitForSufficientFunds(int amount){
-        while(myBank.isOpen() && amount <= balance){
-            try {
-                wait();
-            }
-            catch (InterruptedException e){
-                e.printStackTrace();
-            }
-        }
     }
 }
