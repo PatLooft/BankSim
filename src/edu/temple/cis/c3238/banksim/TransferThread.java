@@ -25,5 +25,6 @@ class TransferThread extends Thread {
             bank.bankLock.lock();
             bank.bankLock.unlock();
         }
+        bank.closeBank();
     }
 }
