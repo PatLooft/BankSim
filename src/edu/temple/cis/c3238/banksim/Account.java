@@ -11,33 +11,42 @@ public class Account {
     private final int id;
     private final Bank myBank;
 
-    public Account(Bank myBank, int id, int initialBalance) {
+    Account(Bank myBank, int id, int initialBalance) {
         this.myBank = myBank;
         this.id = id;
         balance = initialBalance;
     }
 
-    public int getBalance() {
+    int getBalance() {
         return balance;
     }
 
-    public synchronized boolean withdraw(int amount) {
+    synchronized boolean withdraw(int amount) {
         if (amount <= balance) {
             int currentBalance = balance;
 //            Thread.yield(); // Try to force collision
-            int newBalance = currentBalance - amount;
-            balance = newBalance;
+            balance = currentBalance - amount;
             return true;
         } else {
             return false;
         }
     }
 
-    public synchronized void deposit(int amount) {
+    synchronized void deposit(int amount) {
         int currentBalance = balance;
 //        Thread.yield();   // Try to force collision
-        int newBalance = currentBalance + amount;
-        balance = newBalance;
+        balance = currentBalance + amount;
+        notifyAll();
+    }
+
+    synchronized void waitForAvailableFunds(int amount) {
+        while (amount >= balance && !myBank.isTesting()) {
+            try {
+                wait(300);
+            } catch (InterruptedException ex) {
+                /* ignore */
+            }
+        }
     }
     
     @Override

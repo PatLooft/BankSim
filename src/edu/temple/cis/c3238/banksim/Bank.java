@@ -15,7 +15,10 @@ class Bank {
     private long ntransacts;
     private final int initialBalance;
     private final int numAccounts;
+
     private boolean open = true;
+
+    private boolean testing;
     ReentrantLock bankLock;
 
     Bank(int numAccounts, int initialBalance) {
@@ -26,11 +29,12 @@ class Bank {
             accounts[i] = new Account(this, i, initialBalance);
         }
         ntransacts = 0;
+        testing = false;
         bankLock = new ReentrantLock();
     }
 
     void transfer(int from, int to, int amount) {
-//        accounts[from].waitForAvailableFunds(amount);
+        accounts[from].waitForAvailableFunds(amount);
         if (accounts[from].withdraw(amount)) {
             accounts[to].deposit(amount);
         }
@@ -46,10 +50,13 @@ class Bank {
     int size() {
         return accounts.length;
     }
-    
-    
+
     private boolean shouldTest() {
-        return ++ntransacts % NTEST == 0;
+        return (++ntransacts % NTEST == 0) && !testing;
+    }
+
+    boolean isTesting() {
+        return testing;
     }
 
     synchronized boolean isOpen(){
@@ -65,6 +72,9 @@ class Bank {
                 a.notifyAll();
             }
         }
+    }
+    void setTesting(boolean testing) {
+        this.testing = testing;
     }
 
 }
