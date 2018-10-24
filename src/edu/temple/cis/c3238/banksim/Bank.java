@@ -15,6 +15,7 @@ class Bank {
     private long ntransacts;
     private final int initialBalance;
     private final int numAccounts;
+    private boolean open = true;
     ReentrantLock bankLock;
 
     Bank(int numAccounts, int initialBalance) {
@@ -49,6 +50,21 @@ class Bank {
     
     private boolean shouldTest() {
         return ++ntransacts % NTEST == 0;
+    }
+
+    synchronized boolean isOpen(){
+        return open;
+    }
+
+    void closeBank(){
+        synchronized (this){
+            open = false;
+        }
+        for(Account a: accounts){
+            synchronized (a){
+                a.notifyAll();
+            }
+        }
     }
 
 }
