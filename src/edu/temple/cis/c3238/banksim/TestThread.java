@@ -17,6 +17,7 @@ class TestThread implements Runnable {
     @Override
     public void run() {
         bank.bankLock.lock();
+        bank.setTesting(true);
         while (bank.bankLock.getQueueLength() < numAccounts) {
             try {
                 Thread.sleep(50);
@@ -41,6 +42,7 @@ class TestThread implements Runnable {
             System.out.println(Thread.currentThread().toString() +
                     " The bank is in balance");
         }
+        bank.setTesting(false);
         bank.bankLock.unlock();
     }
 }
