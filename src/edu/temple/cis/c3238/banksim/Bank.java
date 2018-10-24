@@ -15,6 +15,9 @@ class Bank {
     private long ntransacts;
     private final int initialBalance;
     private final int numAccounts;
+
+    private boolean open = true;
+
     private boolean testing;
     ReentrantLock bankLock;
 
@@ -56,7 +59,22 @@ class Bank {
         return testing;
     }
 
+    synchronized boolean isOpen(){
+        return open;
+    }
+
+    void closeBank(){
+        synchronized (this){
+            open = false;
+        }
+        for(Account a: accounts){
+            synchronized (a){
+                a.notifyAll();
+            }
+        }
+    }
     void setTesting(boolean testing) {
         this.testing = testing;
     }
+
 }
