@@ -1,5 +1,7 @@
 package edu.temple.cis.c3238.banksim;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * @author Cay Horstmann
  * @author Modified by Paul Wolfgang
@@ -8,11 +10,12 @@ package edu.temple.cis.c3238.banksim;
 
 class Bank {
 
-    public static final int NTEST = 10;
+    private static final int NTEST = 10;
     private final Account[] accounts;
-    private long ntransacts = 0;
+    private long ntransacts;
     private final int initialBalance;
     private final int numAccounts;
+    ReentrantLock bankLock;
 
     Bank(int numAccounts, int initialBalance) {
         this.initialBalance = initialBalance;
@@ -22,6 +25,7 @@ class Bank {
             accounts[i] = new Account(this, i, initialBalance);
         }
         ntransacts = 0;
+        bankLock = new ReentrantLock();
     }
 
     void transfer(int from, int to, int amount) {
@@ -32,8 +36,8 @@ class Bank {
         if (shouldTest()) test();
     }
 
-    void test() {
-        Runnable testRunnable = new TestThread(accounts, numAccounts, initialBalance);
+    private void test() {
+        Runnable testRunnable = new TestThread(this, accounts, numAccounts, initialBalance);
         Thread testThread = new Thread(testRunnable);
         testThread.start();
     }
@@ -43,7 +47,7 @@ class Bank {
     }
     
     
-    boolean shouldTest() {
+    private boolean shouldTest() {
         return ++ntransacts % NTEST == 0;
     }
 

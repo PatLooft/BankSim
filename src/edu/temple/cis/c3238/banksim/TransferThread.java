@@ -10,7 +10,7 @@ class TransferThread extends Thread {
     private final int fromAccount;
     private final int maxAmount;
 
-    public TransferThread(Bank b, int from, int max) {
+    TransferThread(Bank b, int from, int max) {
         bank = b;
         fromAccount = from;
         maxAmount = max;
@@ -22,6 +22,8 @@ class TransferThread extends Thread {
             int toAccount = (int) (bank.size() * Math.random());
             int amount = (int) (maxAmount * Math.random());
             bank.transfer(fromAccount, toAccount, amount);
+            bank.bankLock.lock();
+            bank.bankLock.unlock();
         }
     }
 }
